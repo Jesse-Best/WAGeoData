@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.qrc.dep
+resources_rc.py
+*.zip
+*.tar
+build/
+dist/
+*.egg-info/
+Makefile
+pylintrc
+pb_tool.cfg
+plugin_upload.py

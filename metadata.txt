@@ -1,0 +1,29 @@
+[general]
+name=WA Geo Data
+qgisMinimumVersion=3.0
+description=The WA Geo Data plugin provides quick access to DMPE publicly available map services.
+version=1.0
+author=Jesse Best
+email=jessebest2@gmail.com
+
+about=The WA Geo Data plugin provides access to publicly available map services data published by the Western Australian Department of Mines, Petroleum and Exploration. © State of Western Australia (Department of Mines, Petroleum and Exploration) 2025
+
+tracker=https://github.com/Jesse-Best/WAGeoData/issues
+repository=https://github.com/Jesse-Best/WAGeoData
+
+hasProcessingProvider=no
+
+changelog=- 1.0 Added plugin to github repository
+
+tags=geology,geoscience,australia,western australia,wa,DMIRS,DMPE,wms,maps,web,webservice,service,python
+
+homepage=https://Jesse-Best.github.io/
+category=Plugins
+icon=img/wageodata_icon.png
+
+experimental=False
+deprecated=False
+
+# If the plugin can run on QGIS Server.
+server=False
+

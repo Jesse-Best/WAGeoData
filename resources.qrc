@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/wa_geo_data" >
+        <file>img/wageodata_icon.png</file>
+    </qresource>
+</RCC>
