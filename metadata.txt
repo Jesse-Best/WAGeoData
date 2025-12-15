@@ -2,7 +2,7 @@
 name=WA Geo Data
 qgisMinimumVersion=3.0
 description=The WA Geo Data plugin provides quick access to DMPE publicly available map services.
-version=1.0
+version=1.1
 author=Jesse Best
 email=jessebest2@gmail.com
 
