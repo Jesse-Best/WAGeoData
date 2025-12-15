@@ -5,13 +5,12 @@ def load_layer(layer, service_url, iface, layer_format):
         layer_name = layer[0]
         uri = (
             "contextualWMSLegend=0"
-            "&crs=EPSG:4326"
-            "&dpiMode=7"
-            "&featureCount=10"
-            "&format=image/jpeg"
+            "&version=1.3.0"
+            "&crs=EPSG:7844"
+            "&format=image/png"
+            "&transparent=true"
             f"&layers={layer[1]}"
-            "&styles"
-            "&tilePixelRatio=0"
+            "&styles="
             f"&url={service_url}"
         )
 
