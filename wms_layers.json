@@ -1,14 +1,27 @@
 [
     {
         "Service": "DMIRS Imagery Service",
-        "URL": "https://services.slip.wa.gov.au/public/services/SLIP_Public_Services/DMIRS_Imagery_Service/MapServer/WMSServer"
+        "URL": "https://services.slip.wa.gov.au/public/services/SLIP_Public_Services/DMIRS_Imagery_Service/MapServer/WMSServer",
+        "Format": "WMS"
     },
     {
         "Service": "Geology and Soils Map",
-        "URL": "https://public-services.slip.wa.gov.au/public/services/SLIP_Public_Services/Geology_and_Soils_Map/MapServer/WMSServer"
+        "URL": "https://public-services.slip.wa.gov.au/public/services/SLIP_Public_Services/Geology_and_Soils_Map_WFS/MapServer/WFSServer",
+        "Format": "WFS"
     },
     {
         "Service": "Industry and Mining",
-        "URL": "https://public-services.slip.wa.gov.au/public/services/SLIP_Public_Services/Industry_and_Mining/MapServer/WMSServer"
+        "URL": "https://public-services.slip.wa.gov.au/public/services/SLIP_Public_Services/Industry_and_Mining_WFS/MapServer/WFSServer",
+        "Format": "WFS"
+    },
+    {
+        "Service": "Geology and Soils Map",
+        "URL": "https://public-services.slip.wa.gov.au/public/services/SLIP_Public_Services/Geology_and_Soils_Map/MapServer/WMSServer",
+        "Format": "WMS"
+    },
+    {
+        "Service": "Industry and Mining",
+        "URL": "https://public-services.slip.wa.gov.au/public/services/SLIP_Public_Services/Industry_and_Mining/MapServer/WMSServer",
+        "Format": "WMS"
     }
 ]

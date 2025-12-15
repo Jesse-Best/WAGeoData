@@ -10,7 +10,7 @@ Plugin can be directly downloaded through the QGIS plugin interface or from the 
 - Internet access
 
 ## Credit
-WMS data provided by © State of Western Australia (Department of Mines, Petroleum and Exploration) 2025
+Data provided by © State of Western Australia (Department of Mines, Petroleum and Exploration) 2025
 
 ## License
 The WA Geo Data plugin is licensed under GNU General Public License Version 3.

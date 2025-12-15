@@ -14,6 +14,8 @@ repository=https://github.com/Jesse-Best/WAGeoData
 hasProcessingProvider=no
 
 changelog=- 1.0 Added plugin to github repository
+    - 1.1   Added WFS layer support
+    -       Reworked menu creation
 
 tags=geology,geoscience,australia,western australia,wa,DMIRS,DMPE,wms,maps,web,webservice,service,python
 

@@ -13,3 +13,4 @@ Makefile
 pylintrc
 pb_tool.cfg
 plugin_upload.py
+.vscode
