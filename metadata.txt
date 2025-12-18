@@ -2,7 +2,7 @@
 name=WA Geo Data
 qgisMinimumVersion=3.0
 description=The WA Geo Data plugin provides quick access to DMPE publicly available map services.
-version=1.1.1
+version=1.2.0
 author=Jesse Best
 email=jessebest2@gmail.com
 
@@ -18,6 +18,9 @@ changelog=- 1.0 Added plugin to github repository
     -       Reworked menu creation
     - 1.1.1 Fixed layer scaling issue
             Standardized CRS between WMS and WFS services
+    - 1.2.0 Added premade QGIS styles for WFS layers
+            Added way to exclude broken layers
+            Added pre formatted layer names
 
 tags=geology,geoscience,australia,western australia,wa,DMIRS,DMPE,wms,maps,web,webservice,service,python
 

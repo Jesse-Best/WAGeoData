@@ -30,8 +30,9 @@ from functools import partial
 from .resources import *
 from .constants import PLUGIN_NAME, ABOUT_ICON, ABOUT_URL
 from .helper import Helper
-from .wms_layers import WMS_LAYERS
+from .json_handler import WMS_LAYERS, EXCLUDED_SERVICES
 from .load_layer import *
+from .format_name import *
 
 import os
 import re
@@ -104,10 +105,10 @@ class WAGeoData:
             for menu in self.menu_with_actions:
                 if menu.title() == service_name:
                     for item in menu.actions():
-                        if layer_name[-8:][:-1] == item.text()[-7:]:
+                        if layer_name[-8:-1] == item.text()[-7:]:
                             layer_exists = True
             
-            if not layer_exists:
+            if not layer_exists and layer_name[-9:] not in EXCLUDED_SERVICES and layer_name[-10:-1] not in EXCLUDED_SERVICES:
                 action = QAction(layer_name, self.iface.mainWindow())
                 action.triggered.connect(partial(load_layer, layer=layer, service_url=service_url, iface=self.iface, layer_format = service_format))
                 group_menu.addAction(action)
@@ -159,6 +160,7 @@ class WAGeoData:
             )
             menu.clear()
             for action in actions_sorted:
+                action.setText(format_name(action.text()))
                 menu.addAction(action)
     
     def sort_key(self, action):
