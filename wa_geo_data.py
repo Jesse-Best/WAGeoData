@@ -21,10 +21,10 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt.QtCore import QUrl
+from qgis.PyQt.QtCore import QUrl, QUrlQuery
 from qgis.PyQt.QtWidgets import QAction, QMenu
 from qgis.PyQt.QtGui import QIcon, QDesktopServices
-from qgis.core import QgsNetworkAccessManager, Qgis
+from qgis.core import Qgis
 from functools import partial
 
 from .resources import *
@@ -54,38 +54,43 @@ class WAGeoData:
             os.path.dirname(__file__), ABOUT_ICON
         )
 
-        self.KEY_RE = re.compile(r"([A-Z]+)[\s\-]*?(\d{3})\)?$")
+        self.KEY_RE = re.compile(r"([A-Z]+)[\s\-]*?(\d{3})\)?$") # menu sort key regex
 
     def initGui(self):
         self.menu = QMenu(self.iface.mainWindow())
         self.menu.setObjectName(PLUGIN_NAME)
         self.menu.setTitle(PLUGIN_NAME)
 
+        menu_bar = self.iface.mainWindow().menuBar()
+        menu_bar.insertMenu(
+            self.iface.firstRightStandardMenu().menuAction(), self.menu
+        )
+        self._menu_added = True
+
         self.menu_with_actions = []
         self.helpers = []
         self.services_remaining = len(WMS_LAYERS)
 
-        if QgsNetworkAccessManager.instance().networkAccessible():
-            for service in WMS_LAYERS:
-                url = service["URL"]
-                self.service_format = service["Format"]
-                if self.service_format == "WMS":
-                    helper = Helper(QUrl(url + "?service=WMS&request=GetCapabilities&version=1.3.0"), self.service_format)
-                elif self.service_format == "WFS":
-                  helper = Helper(QUrl(url + "?service=WFS&request=GetCapabilities"), self.service_format)
-                else:
-                  continue
-                helper.finished.connect(partial(self.create_menu,
-                                service_name=service["Service"],
-                                service_url=url,
-                                service_format=self.service_format))
-                helper.error.connect(self.show_error)
-                self.helpers.append(helper)
-                helper.fetch()
-        else:
-            self.iface.messageBar().pushMessage("WA Geo Data:", "Failed to connect to network.", level=Qgis.Warning, duration=15)
-            self.finish_menu()
-
+        for service in WMS_LAYERS:
+            url = service["URL"]
+            qurl = QUrl(url)
+            service_format = service["Format"]
+            
+            query = QUrlQuery()
+            query.addQueryItem("service", service_format)
+            query.addQueryItem("request", "GetCapabilities")
+            qurl.setQuery(query)
+            
+            full_url = qurl.toString()
+            helper = Helper(full_url, service_format)
+            helper.finished.connect(partial(self.create_menu,
+                            service_name=service["Service"],
+                            service_url=url,
+                            service_format=service_format))
+            helper.error.connect(self.show_error)
+            self.helpers.append(helper)
+            helper.fetch()
+            
     def create_menu(self, layers, service_name, service_url, service_format):
         group_menu = QMenu()
         # check if menu already exists
@@ -115,13 +120,6 @@ class WAGeoData:
 
         self.menu.addMenu(group_menu)
         self.menu_with_actions.append(group_menu)
-
-        if not hasattr(self, "_menu_added"):
-            menu_bar = self.iface.mainWindow().menuBar()
-            menu_bar.insertMenu(
-                self.iface.firstRightStandardMenu().menuAction(), self.menu
-            )
-            self._menu_added = True
         
         self.services_remaining -= 1
 
@@ -139,7 +137,7 @@ class WAGeoData:
         self.reorder_menu()
 
         self.create_about_menu()
-        if not QgsNetworkAccessManager.instance().networkAccessible() or any(h.failed for h in self.helpers):
+        if any(h.failed for h in self.helpers):
             self.create_reload_menu()
 
     def create_about_menu(self):
@@ -179,7 +177,7 @@ class WAGeoData:
 
     def show_error(self, message):
         self.services_remaining -= 1
-        self.iface.messageBar().pushMessage("WA Geo Data:", message, level=Qgis.Warning, duration=15)
+        self.iface.messageBar().pushMessage("WA Geo Data", message, level=Qgis.Warning, duration=15)
         if self.services_remaining == 0:
             self.finish_menu()
         

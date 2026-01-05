@@ -1,4 +1,4 @@
-from qgis.core import QgsRasterLayer, QgsVectorLayer, QgsProject, QgsNetworkAccessManager, Qgis
+from qgis.core import QgsRasterLayer, QgsVectorLayer, QgsProject, Qgis
 import os
 from .format_name import *
 
@@ -15,15 +15,11 @@ def load_layer(layer, service_url, iface, layer_format):
             "&styles="
             f"&url={service_url}"
         )
-
-        if not QgsNetworkAccessManager.instance().networkAccessible():
-            iface.messageBar().pushMessage("WA Geo Data:", "Cannot load layer - no internet connection.", level=Qgis.Warning, duration=15)
-            return
         
         map_layer = QgsRasterLayer(uri, layer_name, "wms")
 
         if not map_layer.isValid():
-            iface.messageBar().pushMessage("WA Geo Data:", f"Failed to load WMS layer {layer_name}.", level=Qgis.Warning, duration=15)
+            iface.messageBar().pushMessage("WA Geo Data", f"Failed to load WMS layer {layer_name}.", level=Qgis.Warning, duration=15)
             return
         
         QgsProject.instance().addMapLayer(map_layer)
@@ -34,15 +30,11 @@ def load_layer(layer, service_url, iface, layer_format):
             f"typename='{layer[1]}'"
             f"url='{service_url}'"
         )
-
-        if not QgsNetworkAccessManager.instance().networkAccessible():
-            iface.messageBar().pushMessage("WA Geo Data:", "Cannot load layer - no internet connection.", level=Qgis.Warning, duration=15)
-            return
         
         map_layer = QgsVectorLayer(uri, layer_name, "WFS")
 
         if not map_layer.isValid():
-            iface.messageBar().pushMessage("WA Geo Data:", f"Failed to load WFS layer {layer_name}.", level=Qgis.Warning, duration=15)
+            iface.messageBar().pushMessage("WA Geo Data", f"Failed to load WFS layer {layer_name}.", level=Qgis.Warning, duration=15)
             return
         
         # applies .qml styles to WFS layer

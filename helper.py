@@ -1,31 +1,56 @@
-from qgis.PyQt.QtCore import QObject, pyqtSignal
-from qgis.PyQt.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
+from qgis.PyQt.QtCore import QObject, pyqtSignal, QUrl
+from qgis.PyQt.QtNetwork import QNetworkReply
+from qgis.core import QgsNetworkContentFetcher
 import xml.etree.ElementTree as ET
 
 class Helper(QObject):
-    finished = pyqtSignal(list)
-    error = pyqtSignal(str)
+    finished = pyqtSignal(list, name="finished")
+    error = pyqtSignal(str, name="error")
 
     def __init__(self, url, service):
         super().__init__()
         self.url = url
         self.service = service
         self.failed = False
-        self.nam = QNetworkAccessManager()
-        self.nam.finished.connect(self._reply)
+        self.fetcher = None
 
     def fetch(self):
-        req = QNetworkRequest(self.url)
-        req.setRawHeader(b"User-Agent", b"Mozilla/5.0")
-        self.nam.get(req)
+        self.fetcher = QgsNetworkContentFetcher()
+        self.fetcher.setParent(self)
+        self.fetcher.finished.connect(self._reply)
+        self.fetcher.fetchContent(QUrl(self.url))
 
-    def _reply(self, reply):
-        if reply.error() != QNetworkReply.NoError:
-            message = f"Failed to fetch capabilities:\n{reply.errorString()}"
-            self.failed = True
-            self.error.emit(message)
+    def _reply(self):
+        if not self.fetcher:
             return
-        data = reply.readAll().data()
+            
+        # check for errors
+        reply = self.fetcher.reply()
+        if not reply:
+            self.failed = True
+            self.error.emit(f"Failed to fetch capabilities:\nNo reply object created")
+            return
+        try:
+            no_error = QNetworkReply.NoError
+        except AttributeError:
+            no_error = QNetworkReply.NetworkError.NoError
+        if reply.error() != no_error:
+            error_code = reply.error()
+            error_msg = reply.errorString() if hasattr(reply, 'errorString') else "Unknown error"
+            self.failed = True
+            self.error.emit(f"Failed to fetch capabilities:\nError {error_code}: {error_msg}")
+            return
+        
+        # read content as bytes
+        try:
+            data = bytes(self.fetcher.reply().content())
+        except (AttributeError, TypeError):
+            try:
+                data = self.fetcher.reply().readAll().data()
+            except (AttributeError, TypeError):
+                # string fallback
+                data = self.fetcher.reply().readAll()
+        
         try:
             if self.service == "WMS":
                 layers = self._parse_WMS(data)
@@ -36,7 +61,6 @@ class Helper(QObject):
         except Exception as e:
             self.failed = True
             self.error.emit(f"Invalid GetCapabilities response:\n{e}")
-        reply.deleteLater()
 
     def _parse_WMS(self, xml_bytes):
         root = ET.fromstring(xml_bytes)
@@ -70,3 +94,4 @@ class Helper(QObject):
                 results.append((title.text if title is not None else name.text, name.text))
 
         return results
+    
